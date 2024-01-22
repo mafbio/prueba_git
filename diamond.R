@@ -144,3 +144,61 @@ ggplot(
   mapping=aes(x=price,y=..density..)
 )+
   geom_freqpoly(mapping=aes(color=cut), binwidth=500)
+ggplot(data=diamonds, mapping = aes(x=cut,y=price))+
+  geom_boxplot()
+ggplot(data=mpg, mapping=aes(x=class, y=hwy))+
+  geom_boxplot()
+ggplot(data=mpg)+
+  geom_boxplot(
+    mapping=aes(
+      x=reorder(class, hwy, FUN=median),
+      y=hwy
+    )
+  )
+ggplot(data=mpg)+
+  geom_boxplot(
+    mapping = aes(
+      x=reorder(class, hwy, FUN= median),
+      y=hwy
+      )
+    )+
+      coord_flip()
+
+#Exercises
+#1
+view(flights)
+nycflights13::flights %>%
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + sched_min / 60
+  ) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y = sched_dep_time, x = cancelled))
+
+#2
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point()
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)), orientation = "x")
+diamonds %>%
+  mutate(color = fct_rev(color)) %>%
+  ggplot(aes(x = color, y = price)) +
+  geom_boxplot()
+ggplot(data = diamonds) +
+  geom_boxplot(mapping = aes(x = clarity, y = price))
+ggplot(diamonds, aes(x = cut, y = carat)) +
+  geom_boxplot()
+#3
+library(ggstance)
+ggplot(data=mpg)+
+  geom_boxplot(
+    mapping = aes(
+      x=reorder(class, hwy, FUN= median),
+      y=hwy
+    ))
+ggplot(data = mpg) +
+  geom_boxploth(mapping = aes(y = reorder(class, hwy, FUN = median), x = hwy))
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(y = reorder(class, hwy, FUN = median), x = hwy), orientation = "y")
