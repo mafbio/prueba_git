@@ -135,6 +135,7 @@ mean(c(1,2,0,0))
 
 
 #Covariation
+# A categorical and continuous variable
 ggplot(data=diamonds, mapping=aes(x=price))+
   geom_freqpoly(mapping=aes(color=cut), binwidth=500)
 ggplot(diamonds)+geom_bar(mapping=aes(x=cut))
@@ -202,3 +203,70 @@ ggplot(data = mpg) +
   geom_boxploth(mapping = aes(y = reorder(class, hwy, FUN = median), x = hwy))
 ggplot(data = mpg) +
   geom_boxplot(mapping = aes(y = reorder(class, hwy, FUN = median), x = hwy), orientation = "y")
+#4
+ggplot(data=diamonds, mapping = aes(x=cut,y=price))+
+  geom_boxplot()
+library(lvplot)
+
+ggplot(data=diamonds, mapping = aes(x=cut,y=price))+
+  geom_lv()
+#5
+ggplot(data = diamonds, mapping = aes(x = price, y = ..density..)) +
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)
+ggplot(data = diamonds, mapping = aes(x = price)) +
+  geom_histogram() +
+  facet_wrap(~cut, ncol = 1, scales = "free_y")
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_violin() +
+  coord_flip()
+#6
+
+#Two categorcal variables
+ggplot(data=diamonds)+
+  geom_count(mapping=aes(x=cut,y=color))
+library(dplyr)
+diamonds%>%
+  count(color,cut)
+diamonds%>%
+  count(color,cut)%>%
+  ggplot(mapping=aes(x=color, y=cut))+
+  geom_tile(mapping=aes(fill=n))
+#Exercises 
+#1
+
+diamonds %>%
+  count(color, cut) %>%
+  group_by(color) %>%
+  mutate(prop = n / sum(n)) %>%
+  ggplot(mapping = aes(x = color, y = cut)) +
+  geom_tile(mapping = aes(fill = prop))
+
+diamonds %>%
+  count(color, cut) %>%
+  group_by(cut) %>%
+  mutate(prop = n / sum(n)) %>%
+  ggplot(mapping = aes(x = color, y = cut)) +
+  geom_tile(mapping = aes(fill = prop))
+#2
+flights %>%
+  group_by(month, dest) %>%
+  summarise(dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  ggplot(aes(x = factor(month), y = dest, fill = dep_delay)) +
+  geom_tile() +
+  labs(x = "Month", y = "Destination", fill = "Departure Delay")
+flights %>%
+  group_by(month, dest) %>%                                 # This gives us (month, dest) pairs
+  summarise(dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  group_by(dest) %>%                                        # group all (month, dest) pairs by dest ..
+  filter(n() == 12) %>%                                     # and only select those that have one entry per month 
+  ungroup() %>%
+  mutate(dest = reorder(dest, dep_delay)) %>%
+  ggplot(aes(x = factor(month), y = dest, fill = dep_delay)) +
+  geom_tile() +
+  labs(x = "Month", y = "Destination", fill = "Departure Delay")
+#3
+diamonds %>%
+  count(color, cut) %>%
+  ggplot(mapping = aes(y = color, x = cut)) +
+  geom_tile(mapping = aes(fill = n))
+
